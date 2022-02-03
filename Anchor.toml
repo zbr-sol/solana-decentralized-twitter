@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-solana_twitter = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+solana_twitter = "6DAtUVDGwUrV5xEtRxyYXGG6kvskeFQuhDNyt7E38yhx"
 
 [registry]
 url = "https://anchor.projectserum.com"
@@ -12,3 +12,4 @@ wallet = "/Users/zachboerger/.config/solana/devnet.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+silly-echo = "echo 'Hello from ZBR!'"
