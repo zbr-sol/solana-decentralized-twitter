@@ -2,6 +2,7 @@ import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
 import { SolanaTwitter } from '../target/types/solana_twitter';
 import * as assert from "assert";
+import * as bs58 from "bs58";
 
 describe('solana-twitter', () => {
 
@@ -57,7 +58,7 @@ describe('solana-twitter', () => {
 
     // Call the "SendTweet" instruction on behalf of this other user.
     const tweet = anchor.web3.Keypair.generate();
-    await program.rpc.sendTweet('', 'Hello World from a different user', {
+    await program.rpc.sendTweet('Test', 'Hello World from a different user', {
         accounts: {
             tweet: tweet.publicKey,
             author: newUser.publicKey,
@@ -71,7 +72,7 @@ describe('solana-twitter', () => {
 
     // Ensure it has the right data.
     assert.equal(tweetAccount.author.toBase58(), newUser.publicKey.toBase58());
-    assert.equal(tweetAccount.topic, '');
+    assert.equal(tweetAccount.topic, 'Test');
     assert.equal(tweetAccount.content, 'Hello World from a different user');
     assert.ok(tweetAccount.timestamp);
   });
@@ -144,6 +145,25 @@ describe('solana-twitter', () => {
     assert.equal(tweetAccounts.length, 2);
     assert.ok(tweetAccounts.every(tweetAccount => {
       return tweetAccount.account.author.toBase58() === authorPublicKey.toBase58()
-  }))
+    }))
+  });
+
+  it('can filter tweets by topics', async () => {
+    const tweetAccounts = await program.account.tweet.all([
+        {
+            memcmp: {
+                offset: 8 + // Discriminator.
+                    32 + // Author public key.
+                    8 + // Timestamp.
+                    4, // Topic string prefix.
+                bytes: bs58.encode(Buffer.from('NBA')),
+            }
+        }
+    ]);
+
+    assert.equal(tweetAccounts.length, 1);
+    assert.ok(tweetAccounts.every(tweetAccount => {
+        return tweetAccount.account.topic === 'NBA'
+    }))
   });
 });
