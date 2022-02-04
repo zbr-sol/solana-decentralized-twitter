@@ -116,4 +116,34 @@ describe('solana-twitter', () => {
 
     assert.fail('The instruction should have failed with a 281-character content.');
   });
+
+  // NOTE - BE AWARE
+  // this test is pretty brittle in my opinion.
+  // we're relying on the fact that the 5 tests above this one result in 3 total Tweets being created.
+  // if any of those above tests change, we will have to change the assertion value in this test. yuck.
+  // But for now, this is an OK-if-gross way to verify we can fetch ALL tweet accounts ever created.
+  it('can fetch all tweets', async () => {
+    const grossTweetCountFromAboveTests = 3;
+    const tweetAccounts = await program.account.tweet.all();
+    assert.equal(tweetAccounts.length, grossTweetCountFromAboveTests);
+  });
+
+  // Same note as above. We're relying on the fact that so far, our wallet has created
+  // 2 of the 3 total tweet acounts. So, the tweetAccounts variable below should only have 2 accounts.
+  it('can filter tweets by author', async () => {
+    const authorPublicKey = program.provider.wallet.publicKey
+    const tweetAccounts = await program.account.tweet.all([
+        {
+            memcmp: {
+                offset: 8, // First 8 bytes are the Discriminator and then the author's public key comes afterwards.
+                bytes: authorPublicKey.toBase58(),
+            }
+        }
+    ]);
+
+    assert.equal(tweetAccounts.length, 2);
+    assert.ok(tweetAccounts.every(tweetAccount => {
+      return tweetAccount.account.author.toBase58() === authorPublicKey.toBase58()
+  }))
+  });
 });
