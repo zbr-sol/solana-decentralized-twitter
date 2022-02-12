@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@project-serum/anchor": "^0.20.1",
+    "@solana/wallet-adapter-wallets": "^0.15.4",
     "@solana/web3.js": "^1.32.2",
     "autoprefixer": "^10.4.2",
     "core-js": "^3.8.3",
     "postcss": "^8.4.6",
+    "solana-wallets-vue": "^0.3.1",
     "tailwindcss": "^3.0.18",
     "vue": "^3.2.13",
     "vue-router": "^4.0.12"
@@ -37,7 +39,7 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "requireConfigFile" : false,
+      "requireConfigFile": false,
       "parser": "@babel/eslint-parser"
     },
     "rules": {
