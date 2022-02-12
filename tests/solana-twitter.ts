@@ -13,7 +13,7 @@ describe('solana-twitter', () => {
 
   it('can send a new tweet', async () => {
     const tweet = anchor.web3.Keypair.generate();
-    await program.rpc.sendTweet('NBA', 'How about these all star selections??', {
+    await program.rpc.sendTweet('nba', 'How about these all star selections??', {
         accounts: {
             tweet: tweet.publicKey,
             author: program.provider.wallet.publicKey,
@@ -25,7 +25,7 @@ describe('solana-twitter', () => {
     // Fetch the account details of the created tweet.
     const tweetAccount = await program.account.tweet.fetch(tweet.publicKey);
   	assert.equal(tweetAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(tweetAccount.topic, 'NBA');
+    assert.equal(tweetAccount.topic, 'nba');
     assert.equal(tweetAccount.content, 'How about these all star selections??');
     assert.ok(tweetAccount.timestamp);
   });
@@ -58,7 +58,7 @@ describe('solana-twitter', () => {
 
     // Call the "SendTweet" instruction on behalf of this other user.
     const tweet = anchor.web3.Keypair.generate();
-    await program.rpc.sendTweet('Test', 'Hello World from a different user', {
+    await program.rpc.sendTweet('test', 'Hello World from a different user', {
         accounts: {
             tweet: tweet.publicKey,
             author: newUser.publicKey,
@@ -72,7 +72,7 @@ describe('solana-twitter', () => {
 
     // Ensure it has the right data.
     assert.equal(tweetAccount.author.toBase58(), newUser.publicKey.toBase58());
-    assert.equal(tweetAccount.topic, 'Test');
+    assert.equal(tweetAccount.topic, 'test');
     assert.equal(tweetAccount.content, 'Hello World from a different user');
     assert.ok(tweetAccount.timestamp);
   });
@@ -80,7 +80,7 @@ describe('solana-twitter', () => {
   it('cannot give a topic with more than 50 characters', async () => {
     try {
       const tweet = anchor.web3.Keypair.generate();
-      const longTopic = 'NBA'.repeat(17); // 3 char * 17 = 51
+      const longTopic = 'nba'.repeat(17); // 3 char * 17 = 51
       await program.rpc.sendTweet(longTopic, 'How about these all star selections??', {
           accounts: {
               tweet: tweet.publicKey,
@@ -156,14 +156,14 @@ describe('solana-twitter', () => {
                     32 + // Author public key.
                     8 + // Timestamp.
                     4, // Topic string prefix.
-                bytes: bs58.encode(Buffer.from('NBA')),
+                bytes: bs58.encode(Buffer.from('nba')),
             }
         }
     ]);
 
     assert.equal(tweetAccounts.length, 1);
     assert.ok(tweetAccounts.every(tweetAccount => {
-        return tweetAccount.account.topic === 'NBA'
+        return tweetAccount.account.topic === 'nba'
     }))
   });
 });
