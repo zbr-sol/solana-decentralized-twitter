@@ -3,11 +3,18 @@ seeds = false
 [programs.localnet]
 solana_twitter = "6DAtUVDGwUrV5xEtRxyYXGG6kvskeFQuhDNyt7E38yhx"
 
+[programs.devnet]
+solana_twitter = "6DAtUVDGwUrV5xEtRxyYXGG6kvskeFQuhDNyt7E38yhx"
+
+# TODO - We would probably use a different keypair for mainnet cluster in future
+[programs.mainnet]
+solana_twitter = "6DAtUVDGwUrV5xEtRxyYXGG6kvskeFQuhDNyt7E38yhx"
+
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/zachboerger/.config/solana/devnet.json"
 
 [scripts]
