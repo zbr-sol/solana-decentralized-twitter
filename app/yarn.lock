@@ -3345,6 +3345,11 @@
   "resolved" "https://registry.npmjs.org/csstype/-/csstype-2.6.19.tgz"
   "version" "2.6.19"
 
+"dayjs@^1.10.7":
+  "integrity" "sha512-P6twpd70BcPK34K26uJ1KT3wlhpuOAPoMwJzpsIWUxHZ7wpmbdZL/hQqBDfz7hGurYSa5PhzdhDHtt319hL3ig=="
+  "resolved" "https://registry.npmjs.org/dayjs/-/dayjs-1.10.7.tgz"
+  "version" "1.10.7"
+
 "debug@^3.1.1":
   "integrity" "sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ=="
   "resolved" "https://registry.npmjs.org/debug/-/debug-3.2.7.tgz"
