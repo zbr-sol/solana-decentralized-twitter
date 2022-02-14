@@ -203,4 +203,26 @@ describe('solana-twitter', () => {
     assert.equal(updatedTweetAccount.content, 'Time for the NBA to take center stage!');
 
   });
+
+  it('cannot update a tweet authored by someone else', async() => {
+    const author = program.provider.wallet.publicKey;
+    const tweet = await sendTweetWrapper(author, 'nfl', 'Rams are the best team');
+
+    // Try to update the Tweet with a new, different author
+    // Verify that this does not work
+    try {
+      await program.rpc.updateTweet('cincy', 'Bengals are the best team', {
+          accounts: {
+              tweet: tweet.publicKey,
+              author: anchor.web3.Keypair.generate().publicKey,
+          },
+      });
+      assert.fail('We were able to update a tweet that we did not write.');
+  } catch (error) {
+      // Ensure the tweet account kept the initial data.
+      const tweetAccount = await program.account.tweet.fetch(tweet.publicKey);
+      assert.equal(tweetAccount.topic, 'nfl');
+      assert.equal(tweetAccount.content, 'Rams are the best team');
+  }
+  });
 });
