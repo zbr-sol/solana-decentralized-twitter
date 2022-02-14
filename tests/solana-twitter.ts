@@ -10,6 +10,19 @@ describe('solana-twitter', () => {
   anchor.setProvider(anchor.Provider.env());
 
   const program = anchor.workspace.SolanaTwitter as Program<SolanaTwitter>;
+  const sendTweetWrapper = async (author, topic, content) => {
+    const tweet = anchor.web3.Keypair.generate();
+    await program.rpc.sendTweet(topic, content, {
+        accounts: {
+            tweet: tweet.publicKey,
+            author: author,
+            systemProgram: anchor.web3.SystemProgram.programId,
+        },
+        signers: [tweet],
+    });
+
+    return tweet
+}
 
   it('can send a new tweet', async () => {
     const tweet = anchor.web3.Keypair.generate();
@@ -165,5 +178,29 @@ describe('solana-twitter', () => {
     assert.ok(tweetAccounts.every(tweetAccount => {
         return tweetAccount.account.topic === 'nba'
     }))
+  });
+
+  it('can update an existing tweet', async() => {
+    const author = program.provider.wallet.publicKey;
+    const tweet = await sendTweetWrapper(author, 'nfl', 'Rams just won the Super Bowl!');
+    const tweetAccount = await program.account.tweet.fetch(tweet.publicKey);
+
+    // sanity check we are grabbing the right data to start
+    assert.equal(tweetAccount.topic, 'nfl');
+    assert.equal(tweetAccount.content, 'Rams just won the Super Bowl!');
+
+    // Call updateTweet()
+    await program.rpc.updateTweet('nba', 'Time for the NBA to take center stage!', {
+      accounts: {
+        tweet: tweet.publicKey,
+        author: program.provider.wallet.publicKey,
+      },
+    });
+
+    // Verify that the data for the existing tweet has been updated
+    const updatedTweetAccount = await program.account.tweet.fetch(tweet.publicKey);
+    assert.equal(updatedTweetAccount.topic, 'nba');
+    assert.equal(updatedTweetAccount.content, 'Time for the NBA to take center stage!');
+
   });
 });
