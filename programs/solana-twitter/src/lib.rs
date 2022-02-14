@@ -26,6 +26,23 @@ pub mod solana_twitter {
 
         Ok(())
     }
+
+    pub fn update_tweet(ctx: Context<UpdateTweet>, topic: String, content: String) -> ProgramResult {
+        let tweet: &mut Account<Tweet> = &mut ctx.accounts.tweet;
+
+        if topic.chars().count() > 50 {
+            return Err(ErrorCode::TopicTooLong.into())
+        }
+
+        if content.chars().count() > 280 {
+            return Err(ErrorCode::ContentTooLong.into())
+        }
+
+        tweet.topic = topic;
+        tweet.content = content;
+
+        Ok(())
+    }
 }
 
 // Here we define the structure of the Tweet account
@@ -45,6 +62,13 @@ pub struct SendTweet<'info> {
     pub author: Signer<'info>,
     #[account(address = system_program::ID)]
     pub system_program: AccountInfo<'info>,
+}
+
+#[derive(Accounts)]
+pub struct UpdateTweet<'info> {
+    #[account(mut, has_one = author)]
+    pub tweet: Account<'info, Tweet>,
+    pub author: Signer<'info>,
 }
 
 const DISCRIMINATOR_LENGTH: usize = 8;
