@@ -218,12 +218,12 @@ describe('solana-twitter', () => {
           },
       });
       assert.fail('We were able to update a tweet that we did not write.');
-  } catch (error) {
-      // Ensure the tweet account kept the initial data.
-      const tweetAccount = await program.account.tweet.fetch(tweet.publicKey);
-      assert.equal(tweetAccount.topic, 'nfl');
-      assert.equal(tweetAccount.content, 'Rams are the best team');
-  }
+    } catch (error) {
+        // Ensure the tweet account kept the initial data.
+        const tweetAccount = await program.account.tweet.fetch(tweet.publicKey);
+        assert.equal(tweetAccount.topic, 'nfl');
+        assert.equal(tweetAccount.content, 'Rams are the best team');
+    }
   });
 
   it('can delete a tweet', async () => {
@@ -239,5 +239,27 @@ describe('solana-twitter', () => {
 
     const tweetAccount = await program.account.tweet.fetchNullable(tweet.publicKey);
     assert.ok(tweetAccount === null);
+  });
+
+  it('cannot delete a tweet authored by someone else', async() => {
+    const author = program.provider.wallet.publicKey;
+    const tweet = await sendTweetWrapper(author, 'permanent', 'This tweet is not going anywhere!');
+
+    // Try to update the Tweet with a new, different author
+    // Verify that this does not work
+    try {
+      await program.rpc.deleteTweet({
+        accounts: {
+          tweet: tweet.publicKey,
+          author: anchor.web3.Keypair.generate().publicKey,
+        }
+      });
+      assert.fail('We were able to delete a tweet that we did not write.');
+    } catch (error) {
+        // Ensure the tweet account kept the initial data.
+        const tweetAccount = await program.account.tweet.fetch(tweet.publicKey);
+        assert.equal(tweetAccount.topic, 'permanent');
+        assert.equal(tweetAccount.content, 'This tweet is not going anywhere!');
+    }
   });
 });
