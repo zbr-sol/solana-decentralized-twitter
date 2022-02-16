@@ -225,4 +225,19 @@ describe('solana-twitter', () => {
       assert.equal(tweetAccount.content, 'Rams are the best team');
   }
   });
+
+  it('can delete a tweet', async () => {
+    const author = program.provider.wallet.publicKey;
+    const tweet = await sendTweetWrapper(author, '', 'This tweet will be gone soon');
+
+    await program.rpc.deleteTweet({
+      accounts: {
+        tweet: tweet.publicKey,
+        author,
+      }
+    });
+
+    const tweetAccount = await program.account.tweet.fetchNullable(tweet.publicKey);
+    assert.ok(tweetAccount === null);
+  });
 });
