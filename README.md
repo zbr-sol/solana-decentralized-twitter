@@ -15,5 +15,4 @@ Check out `tests/solana-twitter.ts` for the main test suite. This will give a go
 ### **What else could I add?**
 This is absolutely an MVP, and I know there's a few things I could add to improve the experience. I plan to continue working on this project. Some improvements that immediately come to mind:
 1. Improve the UX
-2. Add a "delete tweet" functionality
-3. Add "likes" or "retweet" functionality
+2. Add "likes" or "retweet" functionality
