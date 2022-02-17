@@ -21,3 +21,18 @@
 .swv-dropdown-list-active {
     @apply transform -translate-y-3 md:translate-y-3;
 }
+
+.trashcan {
+    width: 16px;
+    height: 16px;
+    margin-top: 8px;
+  }
+  .trashcan .trashcan-open {
+    display: none;
+  }
+  .trashcan:hover .trashcan-open {
+    display: inline;
+  }
+  .trashcan:hover .trashcan-closed {
+    display: none;
+  }
